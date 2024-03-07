@@ -84,17 +84,41 @@ export default class Service {
                 end: new Date(end)
             }
             var payload = {
-                timeline,
-                access,
+                timelineID,
                 id
             }
-            var token = jwt.sign(payload, process.env.TIMELINE);
+            var token = jwt.sign(payload, process.env.TIMELINE, { algorithm: 'HS256'});
             access.url = token;
             timeline.access = access;
             classe.timeline[index] = timeline;
             await classeModel.findByIdAndUpdate(id, { $set: { timeline: classe.timeline }}, { new: true});
             return { token };
         } catch (err) {
+            return { error: "internal_error" };
+        }
+    }
+
+    async addPresence({ params, data, name }, userID){
+        try {
+            var payload;
+            jwt.verify(params.token, process.env.TIMELINE, (error, decoded) => {
+                if (error) return { error: 'token_is_not_valid' }
+                  payload = decoded;
+              });
+            
+            const classe = await classeModel.findOne({ _id: payload.id });
+            if (!classe) return { error: "classe_not_found" };
+            var attendanceList = classe.attendanceList;
+            attendanceList = [...attendanceList, {
+                date: Date.now(),
+                id: userID,
+                data,
+                name
+            }]
+            var newClasse = await classeModel.findByIdAndUpdate(id, { $set: { attendanceList }}, { new: true});
+            return newClasse;
+        } catch (err) {
+            console.log(err)
             return { error: "internal_error" };
         }
     }
