@@ -1,6 +1,7 @@
 import { Router } from "express";
 
 import categorysRouter from "./resources/categorys.router.js"; 
+import classeRouter from "./resources/classe.router.js";
 import usersRouter from "./resources/users.router.js";
 import cartRouter from "./resources/cart.router.js";
 
@@ -11,5 +12,6 @@ router.get("/ping", (req, res) => {
 });
 
 router.use('/category', categorysRouter);
+router.use('/classe', classeRouter);
 router.use('/user', usersRouter);
 router.use('/cart', cartRouter);
