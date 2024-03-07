@@ -27,6 +27,10 @@ const ClasseSchema = mongoose.Schema({
             description: {
                 type: String
             },
+            date: {
+                type: Date,
+                default: Date.now()
+            },
             access:{
                 url: {
                     type: String

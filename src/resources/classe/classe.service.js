@@ -44,25 +44,56 @@ export default class Service {
         }
     }
 
-    async addTimeline({}){
+    async addTimeline({ id, name, description }){
         try {
-            
+            const classe = await classeModel.findOne({ id });
+            if (!classe) return { error: "classe_not_found" };
+            var timeline = classe.timeline;
+            timeline = [...timeline, { name, description }];
+            var newClasse = await classeModel.findByIdAndUpdate(id, { $set: { timeline }}, { new: true});
+            return newClasse;
+        } catch (err) {
+            console.log(err)
+            return { error: "internal_error" };
+        }
+    }
+
+    async removeTimeline({id, timelineID}){
+        try {
+            const classe = await classeModel.findOne({ id });
+            if (!classe) return { error: "classe_not_found" };
+            var timeline = classe.timeline;
+            timeline = timeline.filter(x => x._id != timelineID);
+            var newClasse = await classeModel.findByIdAndUpdate(id, { $set: { timeline }}, { new: true});
+            return newClasse;          
         } catch (err) {
             return { error: "internal_error" };
         }
     }
 
-    async removeTimeline({}){
+    async requestTimelineHash({id, timelineID}){
         try {
-            
-        } catch (err) {
-            return { error: "internal_error" };
-        }
-    }
-
-    async requestTimelineHash({}){
-        try {
-            
+            const classe = await classeModel.findOne({ id });
+            if (!classe) return { error: "classe_not_found" };
+            var timeline = classe.timeline.find(x => x._id == timelineID);
+            var index = classe.timeline.findIndex(x => x._id == timelineID);
+            const start = Date.now();
+            const end = (start + (60 * 60000));
+            var access = {
+                start: new Date(start),
+                end: new Date(end)
+            }
+            var payload = {
+                timeline,
+                access,
+                id
+            }
+            var token = jwt.sign(payload, process.env.TIMELINE);
+            access.url = token;
+            timeline.access = access;
+            classe.timeline[index] = timeline;
+            await classeModel.findByIdAndUpdate(id, { $set: { timeline: classe.timeline }}, { new: true});
+            return { token };
         } catch (err) {
             return { error: "internal_error" };
         }
