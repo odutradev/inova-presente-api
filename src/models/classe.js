@@ -38,12 +38,14 @@ const ClasseSchema = mongoose.Schema({
                     type: Date
                 }
             },
-            attendanceList:{
+            attendanceList:[
+                {
 				name: String,
 				id: String,
 				date: String,
 				data: Object
-            }
+                }
+            ]
         }
     ]
 });

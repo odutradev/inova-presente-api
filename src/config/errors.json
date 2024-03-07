@@ -19,20 +19,16 @@
         "message": "User not found",
         "statusCode": 404
     },
-    "category_not_found": {
-        "message": "Category not found",
-        "statusCode": 404
-    },
-    "cart_not_found": {
-        "message": "Cart not found",
+    "classe_not_found": {
+        "message": "Classe not found",
         "statusCode": 404
     },
     "user_already_exists": {
         "message": "User already exists",
         "statusCode": 401
     },
-    "category_already_exists": {
-        "message": "Category already exists",
+    "classe_already_exists": {
+        "message": "Classe already exists",
         "statusCode": 401
     },
     "invalid_credentials": {
